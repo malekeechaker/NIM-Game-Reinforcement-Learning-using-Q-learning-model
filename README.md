@@ -19,7 +19,7 @@ This project implements the classic game of **Nim**, where players take turns re
 
 Nim is a strategic two-player game played with several piles of objects. The rules are simple:
 
-![Nim Game Screenshot](images/nim-game.png)
+![Nim Game Screenshot](images/nim-game.jpg)
 
 - **Setup**: The game starts with a number of piles containing a varying number of objects. For example, a starting configuration could be `[1, 3, 5, 7]`, which means there are four piles containing 1, 3, 5, and 7 objects, respectively.
   
