@@ -1,4 +1,5 @@
-from nim import train, play
+from nim import train, play, plot_eval
 import argparse
-ai = train(30000)
-play(ai)
+ai, eval = train(100000)
+plot_eval(eval)
+#play(ai)

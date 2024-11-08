@@ -1,8 +1,10 @@
 import math
 import random
 import time
+import matplotlib.pyplot as plt
 
 
+# Definition of the Game Environment
 class Nim():
 
     def __init__(self, initial=[1, 3, 5, 7]):
@@ -70,6 +72,7 @@ class Nim():
             self.winner = self.player
 
 
+# Definition of the AI Agent
 class NimAI():
 
     def __init__(self, alpha=0.5, epsilon=0.1):
@@ -82,7 +85,7 @@ class NimAI():
          - `state` is a tuple of remaining piles, e.g. (1, 1, 4, 4)
          - `action` is a tuple `(i, j)` for an action
         """
-        self.q = dict()
+        self.q = dict()      # Q-value table
         self.alpha = alpha
         self.epsilon = epsilon
 
@@ -178,9 +181,12 @@ class NimAI():
 def train(n):
     """
     Train an AI by playing `n` games against itself.
+    Returns the trained player and cumulative rewards list.
     """
 
     player = NimAI()
+    cumulative_rewards = []
+    total_reward = 0  # Keep track of total rewards for plotting
 
     # Play n games
     for i in range(n):
@@ -195,7 +201,6 @@ def train(n):
 
         # Game loop
         while True:
-
             # Keep track of current state and action
             state = game.piles.copy()
             action = player.choose_action(game.piles)
@@ -210,13 +215,22 @@ def train(n):
 
             # When game is over, update Q values with rewards
             if game.winner is not None:
+                # Player who made the last move loses
                 player.update(state, action, new_state, -1)
+
+                # The other player wins
                 player.update(
                     last[game.player]["state"],
                     last[game.player]["action"],
                     new_state,
                     1
                 )
+                if game.winner == 1:
+                    total_reward += 1  # Add reward to total (AI won)
+                else:
+                    total_reward -= 1  # Add reward to total (AI lost)
+
+                cumulative_rewards.append(total_reward)
                 break
 
             # If game is continuing, no rewards yet
@@ -229,9 +243,23 @@ def train(n):
                 )
 
     print("Done training")
+    
+    # Return the trained AI and the cumulative rewards
+    return player, cumulative_rewards
 
-    # Return the trained AI
-    return player
+
+def plot_eval(cumulative_rewards):
+    """
+    Plot the cumulative rewards to evaluate training progress.
+    """
+    plt.figure(figsize=(10, 6))
+    plt.plot(cumulative_rewards, label="Cumulative Reward")
+    plt.xlabel("Games Played")
+    plt.ylabel("Cumulative Reward")
+    plt.title("Cumulative Reward Over Time During Training")
+    plt.legend()
+    plt.show()
+
 
 
 def play(ai, human_player=None):
